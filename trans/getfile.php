@@ -24,6 +24,6 @@ if (isset($_GET['file'])) {
         flush();
     }
     fclose($handle);
-}else{
+} else {
     exit("ERROR: download file name not set.");
 }
