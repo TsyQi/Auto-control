@@ -2464,7 +2464,18 @@
         function simRequest(method) {
             var elem = "rsp_msg";
             resetText(elem);
-            handleRequest(document.getElementById("req_url").value, elem, method, document.getElementById("payload").value);
+            var param = "";
+            var payload = document.getElementById("payload").value;
+            if (payload != null && payload !== undefined && payload !== "") {
+                param = payload;
+            } else {
+                var forms = getForms();
+                for (var i = 0; i < forms.length; i++) {
+                    console.log(forms[i]);
+                    param += forms[i].key + "=" + forms[i].value + "&";
+                }
+            }
+            handleRequest(document.getElementById("req_url").value, elem, method, param);
         }
         function jqRequest(method) {
             var elem = "rsp_msg";
@@ -2662,12 +2673,52 @@
                 $("#" + elem).val(val);
             }
         }
+        function add_parameter() {
+            const editBoxes = document.getElementById('edit-boxes');
+            const newBox = document.createElement('div');
+            newBox.className = 'edit-box';
+            newBox.innerHTML = `
+                <input type="text" placeholder="key" style="width:5%" class="text-input">
+                <input type="text" placeholder="value" style="width:5%" class="text-input">
+                <button class="del-btn" onclick="delBox(this)">✖️</button>
+            `;
+            editBoxes.appendChild(newBox);
+        }
+        function delBox(button) {
+            const box = button.parentNode;
+            box.parentNode.removeChild(box);
+        }
+        function getForms() {
+            var value = "";
+            const forms = {};
+            const boxes = document.querySelectorAll('.edit-box');
+            boxes.forEach(box => {
+                const inputs = box.querySelectorAll('input');
+                forms[inputs[0].value] = inputs[1].value;
+                value += inputs[0].value + ": " + inputs[1].value + "\n";
+                // console.log(value);
+            });
+            return forms;
+        }
     </script>
+    <style>
+        .edit-box input {
+            margin-right: 10px;
+        }
+    </style>
     <p style="border: 1px solid; width: 50%;"></p>
     <div>
-        <label>HTTP Request:</label><br>
+        <label>HTTP Request:</label><br><br>
         <input type="text" id="req_url" style="width:60%" title="" value="http://localhost:8989" />
-        <br><textarea id="payload" placeholder="payload"></textarea><br>
+        <br><textarea id="payload" placeholder="payload" style="width:30%"></textarea><br>
+        <div id="edit-boxes">
+            <div class="edit-box">
+                <input type="text" placeholder="key" style="width:5%" class="text-input">
+                <input type="text" placeholder="value" style="width:5%" class="text-input">
+                <button class="del-btn" onclick="delBox(this)">✖️</button>
+            </div>
+        </div>
+        <button onclick="add_parameter()">➕</button><br>
         <button onclick="simRequest('GET')">GET</button>
         <button onclick="simRequest('POST')">POST</button>
         <button onclick="jqRequest('PUT')">PUT</button>
@@ -2872,7 +2923,7 @@
     <div>
         <label>AES:</label><br>
         <input id="cipher" placeholder="cipher" />
-        <input id="key" placeholder="key" /><button onclick="fillkey('key')">ß</button><br>
+        <input id="key" placeholder="key" /><button onclick="fillkey('key')">⋋</button><br>
         <button onclick="aes_encrypt()">encrypt</button>
         <label id="aes_encrypt">&nbsp;</label><br>
         <button onclick="aes_decrypt()">decrypt</button>
@@ -2882,7 +2933,7 @@
     <div>
         <label>AES Latin1:</label><br>
         <input id="cipher1" placeholder="cipher" />
-        <input id="key1" placeholder="key" /><button onclick="fillkey('key1')">ß</button><br>
+        <input id="key1" placeholder="key" /><button onclick="fillkey('key1')">⋋</button><br>
         <button onclick="aes_encrypt1()">encrypt</button>&nbsp;
         <label id="aes_encrypt1"></label><br>
     </div>
@@ -3065,7 +3116,7 @@
         <label id="color_hex_rslt"></label>
         <br><br>
         <label for="color_hex_in"></label>#<input id="color_hex_in" style="width: 80px"><button
-            onclick="autofill()">ß</button>
+            onclick="autofill()">⬅</button>
         <br>
         &nbsp;&nbsp;<button onclick="hex2rgb()">Hex to RGB</button>
         <label id="rslt_rgb_color">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
